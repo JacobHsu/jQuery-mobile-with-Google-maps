@@ -1,79 +1,333 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
+   <head>
+		<title>jQuery mobile with Google maps - Google maps jQuery plugin</title>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta http-equiv="content-language" content="en" />
+		<meta name="author" content="Johan Säll Larsson" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" /><!--手機畫面顯示-->
+		<!-- <meta name="keywords" content="Google maps, jQuery, plugin, mobile, iphone, ipad, android, HTML5" /> -->
+		<meta name="description" content="Examples with jQuery mobile, Google maps and HTML5" />
+		<!-- <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" /> -->
+<!-- 		<meta name="DC.title" content="jQuery mobile with Google maps - Google maps jQuery plugin" />
+		<meta name="DC.subject" content="Google maps;jQuery;plugin;mobile;iphone;ipad;android;HTML5" />
+		<meta name="DC.description" content="Examples with jQuery mobile, Google maps and HTML5" />
+		<meta name="DC.creator" content="Johan Säll Larsson" />
+		<meta name="DC.language" content="en" /> -->
+		<link type="text/css" rel="stylesheet" href="css/jquery-mobile-1.0/jquery.mobile.css" /> <!--第一層CSS-->
+		<link type="text/css" rel="stylesheet" href="css/mobile.css" /> <!--第二層CSS-->
 
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Jquery-mobile-with-google-maps : jQuery mobile, Google maps,">
+		<script type="text/javascript" src="js/modernizr-2.0.6/modernizr.min.js"></script>
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&libraries=places"></script> 
+		<script type="text/javascript" src="js/jquery-1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery-mobile-1.0/jquery.mobile.min.js"></script>
+		<script type="text/javascript" src="js/jquery.ui-1.8.15/jquery.ui.autocomplete.min.js"></script>
+		<script type="text/javascript" src="js/demo.js"></script>
+		<script type="text/javascript" src="ui/jquery.ui.map.js"></script>
+		<script type="text/javascript" src="ui/jquery.ui.map.services.js"></script> <!--導出位址資訊-->
+		<script type="text/javascript" src="ui/jquery.ui.map.extensions.js"></script><!--第二層js-->
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+		<script type="text/javascript">
+		    var mobileDevice;
+			var isiPhone = /iphone/i.test(navigator.userAgent.toLowerCase());
+			var isiPad = /ipad/i.test(navigator.userAgent.toLowerCase());
 
-    <title>Jquery-mobile-with-google-maps</title>
-  </head>
+			var isAndroid = /android/i.test(navigator.userAgent.toLowerCase());
+            var isWebOS = /webos/i.test(navigator.userAgent.toLowerCase());
 
-  <body>
+			if (isiPhone)
+			{
+			  mobileDevice = 'from_iPhone';
+			}
+			else if (isiPad)
+			{
+			  mobileDevice = 'from_iPad';
+			}
+			else if (isAndroid)
+			{
+			  mobileDevice = 'from_Android';
+			}
+			else if (isWebOS)
+			{
+			   mobileDevice = 'from_WebOS';
+			}
+			else{
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/htshboy/jQuery-mobile-with-Google-maps">View on GitHub</a>
+			   mobileDevice ='from_Web';
+			}
 
-          <h1 id="project_title">Jquery-mobile-with-google-maps</h1>
-          <h2 id="project_tagline">jQuery mobile, Google maps,</h2>
+			//alert(mobileDevice); 
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/htshboy/jQuery-mobile-with-Google-maps/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/htshboy/jQuery-mobile-with-Google-maps/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+			 
+		</script>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+		<script type="text/javascript">
+				
+			var mobileDemo = { 'center': '25.04,121.511944', 'zoom': 14 }; //17 25.04, 121.511944 中華民國總統府_(臺北)
+			
+			////////////////////////////////////////////////////////////
+			
+			$('#basic_map').live('pageinit', function() {
+				demo.add('basic_map', function() {
+					$('#map_canvas').gmap({'center': mobileDemo.center, 'zoom': mobileDemo.zoom, 'disableDefaultUI':true, 'callback': function() {
+						var self = this;
+						self.addMarker({'position': this.get('map').getCenter() }).click(function() {
+							self.openInfoWindow({ 'content': 'Hello World!' }, this);
+						});
+					}}); 
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+				}).load('basic_map');
+			});
+			
+			$('#basic_map').live('pageshow', function() {
+				demo.add('basic_map', function() { $('#map_canvas').gmap('refresh'); }).load('basic_map');
+			});
+			
+			////////////////////////////////////////////////////////////
+			
+			$('#directions_map').live('pageinit', function() {
+				demo.add('directions_map', function() {
+					$('#map_canvas_1').gmap({'center': mobileDemo.center, 'zoom': mobileDemo.zoom, 'disableDefaultUI':true, 'callback': function() {
+						var self = this;
+						self.set('getCurrentPosition', function() {
+							self.refresh();
+							self.getCurrentPosition( function(position, status) {
+								if ( status === 'OK' ) {
+									var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
+									self.get('map').panTo(latlng);
+									self.search({ 'location': latlng }, function(results, status) {
+										if ( status === 'OK' ) {
+											$('#from').val(results[0].formatted_address);
+										}
+									});
+								} else {
+									alert('Unable to get current position');
+								}
+							});
+						});
+						$('#submit').click(function() {
+							self.displayDirections({ 'origin': $('#from').val(), 'destination': $('#to').val(), 'travelMode': google.maps.DirectionsTravelMode.DRIVING }, { 'panel': document.getElementById('directions')}, function(response, status) {
+								( status === 'OK' ) ? $('#results').show() : $('#results').hide();
+							});
+							return false;
+						});
+					}});
+				}).load('directions_map');
+			});
+			
+			$('#directions_map').live('pageshow', function() {
+				demo.add('directions_map', $('#map_canvas_1').gmap('get', 'getCurrentPosition')).load('directions_map');
+			});
+			
+			////////////////////////////////////////////////////////////
+							
+			$('#gps_map').live('pageinit', function() {
+				demo.add('gps_map', function() {
+					$('#map_canvas_2').gmap({'center': mobileDemo.center, 'zoom': mobileDemo.zoom, 'disableDefaultUI':true, 'callback': function(map) {
+						var self = this;
+						self.watchPosition(function(position, status) {
+							if ( status === 'OK' ) {
+								var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+								if ( !self.get('markers').client ) {
+									self.addMarker({ 'id': 'client', 'position': latlng, 'bounds': true });
+								} else {
+									self.get('markers').client.setPosition(latlng);
+									map.panTo(latlng);
+								}
+							}
+						});
+					}});
+				}).load('gps_map');
+			});
+			
+			$('#gps_map').live('pageshow', function() {
+				demo.add('gps_map', function() { $('#map_canvas_2').gmap('refresh'); }).load('gps_map');
+			});
+			
+			$('#gps_map').live("pagehide", function() {
+				demo.add('gps_map', function() { $('#map_canvas_2').gmap('clearWatch'); }).load('gps_map');
+			});
+			
+			/////////////////////////////Search for places///////////////////////////////
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+			
+			$('#places').live('pageinit', function() {
+				demo.add('places_1', function() {
+					$('#map_canvas_3').gmap({'center': mobileDemo.center, 'zoom': mobileDemo.zoom, 'disableDefaultUI':true, 'callback': function() {
+						var self = this;
+						var control = self.get('control', function() {
+							$(self.el).append('<div id="control"><div><input id="places-search" class="ui-bar-d ui-input-text ui-body-null ui-corner-all ui-shadow-inset ui-body-d ui-autocomplete-input" type="text"/></div></div>');
+							self.autocomplete($('#places-search')[0], function(ui) {
+								self.clear('markers');
+								self.set('bounds', null);
+								self.placesSearch({ 'location': ui.item.position, 'radius': '500' }, function(results, status) { //5公里
+									if ( status === 'OK' ) {
+										$.each(results, function(i, item) {
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+											var item_url;
+											var url= "https://dl.dropboxusercontent.com/u/63695576/google-maps-icons/";
+											
+											if(item.icon.substr(49) == "generic_business-71.png")
+											    item_url = url+"museum-historical.png";
+											else if(item.icon.substr(49) == "restaurant-71.png")
+											    item_url = url+"restaurant_chinese.png";											
+											else if(item.icon.substr(49) == "fitness-71.png")
+											    item_url = url+"fitnesscenter.png";
+											else if(item.icon.substr(49) == "university-71.png")
+											    item_url = url+"university.png";
+											else if(item.icon.substr(49) == "cafe-71.png") 
+											    item_url = url+"coffee.png";	
+											else if(item.icon.substr(49) == "zoo-71.png") 
+											    item_url = url+"zoo.png";	
+											else if(item.icon.substr(49) == "stadium-71.png") 
+											    item_url = url+"stadium.png";	
+											else if(item.icon.substr(49) == "geocode-71.png") 
+											    item_url = url+"country.png";	
+											else if(item.icon.substr(49) == "airport-71.png") 
+											    item_url = url+"airport.png";	
+											else if(item.icon.substr(49) == "museum-71.png") 
+											    item_url = url+"museum_crafts.png";	
+											else if(item.icon.substr(49) == "electronics-71.png") 
+											    item_url = url+"mall.png";	
+											else if(item.icon.substr(49) == "shopping-71.png") 
+											    item_url = url+"supermarket.png";	 
+											else if(item.icon.substr(49) == "lodging-71.png") 
+											    item_url = url+"lodging_0star.png";	  
+											else if(item.icon.substr(49) == "library-71.png") 
+											    item_url = url+"book.png";	      
+											else if(item.icon.substr(49) == "civic_building-71.png") 
+											    item_url = url+"office-building.png";
+											else if(item.icon.substr(49) == "police-71.png") 
+											    item_url = url+"police2.png";
+											else if(item.icon.substr(49) == "generic_recreational-71.png") 
+											    item_url = url+"spring.png";               										
+											else
+												item_url= item.icon;
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+											self.addMarker({ 'id': item.id, 'position': item.geometry.location, 'bounds':true,'icon': item_url }).click(function() {
+												//self.openInfoWindow({'content': '<h4>'+item.name+'</h4>'}, this);
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+												var string_latlng = item.geometry.location.toString().split(',');
+						
+												 var lat = string_latlng[0].substr(1); //(lat,lng) (lat->lat
+												 var lng = string_latlng[1].slice(0,-1).substr(1,12);//lng)->lng .substr(start [, length ])				
+                                                var send_post = "https://www.google.com.tw/search?q="+item.name;//+mobileDevice+'&lat='+lat+'&lng='+lng;
+												var content_windows = '<h4>'+'<a href='+send_post+'>'+item.name+'</a>'+item.icon.substr(49) +'</h4>';
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
+											
+												self.openInfoWindow({'content': content_windows}, this);
+											});
+										});
+									}
+								});
+							});
+							return $('#control')[0];
+						});
+						self.addControl(new control(), 1);
+					}});
+				}).load('places_1');
+			});
+			
+			$('#places').live('pageshow', function() {
+				demo.add('places_2', function() { $('#map_canvas_3').gmap('refresh'); }).load('places_2');
+			});
+				
+        </script>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Jquery-mobile-with-google-maps maintained by <a href="https://github.com/htshboy">htshboy</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
 
-    
 
-  </body>
+    </head>
+    <body>
+		<div id="home" data-role="page">
+			<div data-role="header">
+				<h1><a data-ajax="false" href="/">Search for places<span id="version"></span></a></h1>
+			</div>
+			<div data-role="content">					
+				<h2>jQuery mobile examples</h2>
+				<ul data-role="listview" data-inset="true" data-theme="c" data-dividertheme="a"> 
+					<li><a href="#places">Search for places</a></li>
+				</ul>
+
+			</div>
+ 			<div data-role="footer" data-theme="a">
+				<p class="more">Jquery-mobile-with-google-maps maintained by <a href="https://github.com/htshboy">htshboy</a></p>
+			</div> 
+			
+		</div>
+		
+		<div id="basic_map" data-role="page">
+			<div data-role="header">
+				<h1><a data-ajax="false" href="/">jQuery mobile with Google maps v3</a> examples</h1>
+				<a data-rel="back">Back</a>
+			</div>
+			<div data-role="content">	
+				<div class="ui-bar-c ui-corner-all ui-shadow" style="padding:1em;">
+					<div id="map_canvas" style="height:350px;"></div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="gps_map" data-role="page">
+			<div data-role="header">
+				<h1><a data-ajax="false" href="/">jQuery mobile with Google maps v3</a> examples</h1>
+				<a data-rel="back">Back</a>
+			</div>
+			<div data-role="content">	
+				<div class="ui-bar-c ui-corner-all ui-shadow" style="padding:1em;">
+					<div id="map_canvas_2" style="height:300px;"></div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="directions_map" data-role="page">
+			<div data-role="header">
+				<h1><a data-ajax="false" href="/">jQuery mobile with Google maps v3</a> examples</h1>
+				<a data-rel="back">Back</a>
+			</div>
+			<div data-role="content">	
+				<div class="ui-bar-c ui-corner-all ui-shadow" style="padding:1em;">
+					<div id="map_canvas_1" style="height:300px;"></div>
+					<p>
+						<label for="from">From</label>
+						<input id="from" class="ui-bar-c" type="text" value="G&ouml;teborg, Sweden" />
+					</p>
+					<p>
+						<label for="to">To</label>
+						<input id="to" class="ui-bar-c" type="text" value="Stockholm, Sweden" />
+					</p>
+					<a id="submit" href="#" data-role="button" data-icon="search">Get directions</a>
+				</div>
+				<div id="results" class="ui-listview ui-listview-inset ui-corner-all ui-shadow" style="display:none;">
+					<div class="ui-li ui-li-divider ui-btn ui-bar-b ui-corner-top ui-btn-up-undefined">Results</div>
+					<div id="directions"></div>
+					<div class="ui-li ui-li-divider ui-btn ui-bar-b ui-corner-bottom ui-btn-up-undefined"></div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="places" data-role="page">
+			<div data-role="header" data-add-back-btn="true">
+				<h1><a data-ajax="false" href="http://jquery-ui-map.googlecode.com/svn/trunk/demos/jquery-google-maps-mobile.html">jQuery mobile with Google maps v3</a> examples</h1>
+				<a data-rel="back">Back</a>
+			</div>
+			<div data-role="content">
+				<div class="ui-bar-c ui-corner-all ui-shadow" style="padding:1em;">
+					<div id="map_canvas_3" style="height:300px;"></div>
+				</div>
+				<!-- <p>This example is using Google geocode for the autocomplete function (which might not be the best way for mobile devices) and Google Places for the results.<p>-->	
+				<p>1.在搜尋欄輸入查找位置，例如：taipei 101 <p>
+				<p>2.點選下方導出的位置資訊(黑色) 帶入搜尋欄 例如：台灣台北市<p>
+				<p>3.地圖會顯示出目標位置範圍五公里內的景點<p>
+				<p>4.選擇其中一個景點標示，打開資訊視窗<p>
+				<p>5.點選資訊視窗上顯示的位置名稱連結開啟Google搜尋<p>
+			</div>
+		</div>
+		
+	</body>
 </html>
